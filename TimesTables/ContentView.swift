@@ -11,7 +11,7 @@ struct ContentView: View {
     
     @State private var showDetailView: Bool = false
     private let adaptiveColumns = [GridItem(.adaptive(minimum: 170))]
-    @State var whichTable: Int = 2
+    @State var whichTable: Int = 0
     
     var body: some View {
         ZStack {
@@ -24,7 +24,7 @@ struct ContentView: View {
                 Spacer(minLength: 50)
                 ScrollView {
                     LazyVGrid(columns: adaptiveColumns, spacing: 20) {
-                        ForEach(2..<20) { number in
+                        ForEach(2..<100) { number in
                             Button(action: {
                                 whichTable = number
                                 showDetailView.toggle()
@@ -36,7 +36,7 @@ struct ContentView: View {
                     .padding(.horizontal)
                 }
                 .sheet(isPresented: $showDetailView) {
-                    DetailView(whichTable: whichTable)
+                    DetailView(whichTable: $whichTable)
                 }
             }
         }

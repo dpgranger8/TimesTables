@@ -11,23 +11,20 @@ private let adaptiveColumns = [GridItem(.adaptive(minimum: 170))]
 
 struct DetailView: View {
     
-    var whichTable: Int
-    @State private var randomNumber: Int
-    @State private var rightAnswer: Int
-    @State private var result: String = ""
-    @State private var userScore: Int = 0
-    @State private var arrayAnswers: [Int]
+    @Binding var whichTable: Int
     
-    init(whichTable: Int) {
-        self.whichTable = whichTable
-        let randomNumber = Int.random(in: 1...12)
-        let rightAnswer = whichTable * randomNumber
-        self._randomNumber = State(initialValue: randomNumber)
-        self._rightAnswer = State(initialValue: rightAnswer)
-        self._arrayAnswers = State(initialValue: DetailView.generateAnswers(rightAnswer: rightAnswer))
+    @State var result: String = ""
+    @State var userScore: Int = 0
+    @State var randomNumber: Int = Int.random(in: 1...12)
+    
+    private var rightAnswer: Int {
+        self.whichTable * self.randomNumber
+    }
+    private var arrayAnswers: [Int] {
+        return self.generateAnswers(rightAnswer: self.rightAnswer)
     }
     
-    static func generateAnswers(rightAnswer: Int) -> [Int] {
+    func generateAnswers(rightAnswer: Int) -> [Int] {
         let lowerBound = max(1, rightAnswer - 5)
         let upperBound = rightAnswer + 5
         var incorrectAnswers = Set<Int>()
@@ -75,12 +72,11 @@ struct DetailView: View {
             }
         }
     }
+    
     func buttonLogic(_ number: Int) {
         if number == rightAnswer {
-            randomNumber = Int.random(in: 1...12)
-            rightAnswer = whichTable * randomNumber
-            arrayAnswers = DetailView.generateAnswers(rightAnswer: rightAnswer)
             userScore += 1
+            randomNumber = Int.random(in: 1...12)
             result = "Correct!"
         } else {
             result = "Incorrect, try again!"
@@ -90,6 +86,6 @@ struct DetailView: View {
 
 struct ContentView_Previews2: PreviewProvider {
     static var previews: some View {
-        DetailView(whichTable: 5)
+        DetailView(whichTable: .constant(5))
     }
 }
